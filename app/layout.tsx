@@ -61,6 +61,7 @@ export const metadata: Metadata = {
     description: "Abra para ver a surpresa que preparamos para você.",
     images: ["/android-chrome-512x512.png"],
   },
+    generator: 'v0.app'
 };
 
 export default function RootLayout({

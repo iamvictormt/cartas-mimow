@@ -114,7 +114,7 @@ export default function WelcomePage() {
           <div className="relative w-full flex items-center justify-center rounded-xl overflow-hidden shadow-sm bg-white aspect-video max-w-xs mx-auto">
             <video
               ref={videoRef}
-              src="/videos/splash.mp4"
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/files-blob/cartasmimo/public/videos/splash-KgTiCls1HdF7yvXX5GjVs6Tlx5ZklY.mp4"
               muted
               loop
               playsInline

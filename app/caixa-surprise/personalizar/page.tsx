@@ -1,48 +1,57 @@
-'use client';
+"use client"
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import Header from "../../../components/Header"
+import Footer from "../../../components/Footer"
+
+interface SurpriseItem {
+  id: string
+  nome: string
+  valor: number
+  descricao?: string
+  imagens?: string[]
+  tipo?: string
+}
 
 export default function PersonalizarPage() {
-  const router = useRouter();
-  const [items, setItems] = useState<any[]>([]);
-  const [identificar, setIdentificar] = useState(true);
-  const [remetente, setRemetente] = useState('');
-  const [mensagem, setMensagem] = useState('');
+  const router = useRouter()
+  const [items, setItems] = useState<SurpriseItem[]>([])
+  const [identificar, setIdentificar] = useState(true)
+  const [remetente, setRemetente] = useState("")
+  const [mensagem, setMensagem] = useState("")
 
   useEffect(() => {
-    const savedItems = localStorage.getItem('surprise_items');
+    const savedItems = localStorage.getItem("surprise_items")
     if (!savedItems) {
-      router.push('/caixa-surprise');
-      return;
+      router.push("/caixa-surprise")
+      return
     }
-    setItems(JSON.parse(savedItems));
-  }, [router]);
+    setItems(JSON.parse(savedItems))
+  }, [router])
 
   const calculateTotal = () => {
-    return items.reduce((sum, item) => sum + item.valor, 0);
-  };
+    return items.reduce((sum, item) => sum + item.valor, 0)
+  }
 
   const handleFinish = () => {
     if (identificar && !remetente.trim()) {
-      alert('Por favor, informe seu nome');
-      return;
+      alert("Por favor, informe seu nome")
+      return
     }
 
     const surpriseBox = {
       items,
       identificar,
-      remetente: identificar ? remetente : 'Anônimo',
+      remetente: identificar ? remetente : "Anônimo",
       mensagem,
       total: calculateTotal(),
       timestamp: Date.now(),
-    };
+    }
 
-    localStorage.setItem('surprise_box_data', JSON.stringify(surpriseBox));
-    router.push('/caixa-surprise/entrega');
-  };
+    localStorage.setItem("surprise_box_data", JSON.stringify(surpriseBox))
+    router.push("/caixa-surprise/entrega")
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -65,14 +74,14 @@ export default function PersonalizarPage() {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between items-center">
                     <span className="text-gray-700">{item.nome}</span>
-                    <span className="font-bold text-red-900">R$ {item.valor.toFixed(2).replace('.', ',')}</span>
+                    <span className="font-bold text-red-900">R$ {item.valor.toFixed(2).replace(".", ",")}</span>
                   </div>
                 ))}
               </div>
               <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
                 <span className="font-bold text-gray-900">Total</span>
                 <span className="text-2xl font-black text-red-900">
-                  R$ {calculateTotal().toFixed(2).replace('.', ',')}
+                  R$ {calculateTotal().toFixed(2).replace(".", ",")}
                 </span>
               </div>
             </div>
@@ -84,9 +93,7 @@ export default function PersonalizarPage() {
                   <button
                     onClick={() => setIdentificar(true)}
                     className={`flex-1 p-4 rounded-lg border-2 transition-all ${
-                      identificar
-                        ? 'border-red-900 bg-red-50/50 ring-4 ring-red-900/5'
-                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                      identificar ? "border-red-900 bg-red-50" : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
                     <p className="font-bold text-gray-900">Me identificar</p>
@@ -94,9 +101,7 @@ export default function PersonalizarPage() {
                   <button
                     onClick={() => setIdentificar(false)}
                     className={`flex-1 p-4 rounded-lg border-2 transition-all ${
-                      !identificar
-                        ? 'border-red-900 bg-red-50/50 ring-4 ring-red-900/5'
-                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                      !identificar ? "border-red-900 bg-red-50" : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
                     <p className="font-bold text-gray-900">Anônimo</p>
@@ -109,7 +114,7 @@ export default function PersonalizarPage() {
                     value={remetente}
                     onChange={(e) => setRemetente(e.target.value)}
                     placeholder="Seu nome"
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-red-900/20 focus:border-transparent outline-none transition-all"
                   />
                 )}
               </div>
@@ -123,7 +128,7 @@ export default function PersonalizarPage() {
                 placeholder="Deixe uma mensagem especial..."
                 rows={4}
                 maxLength={500}
-                className="w-full p-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-red-900/20 focus:border-transparent outline-none transition-all resize-none"
               />
               <p className="text-sm text-gray-500 mt-2 text-right">{mensagem.length}/500</p>
             </div>
@@ -141,5 +146,5 @@ export default function PersonalizarPage() {
 
       <Footer />
     </div>
-  );
+  )
 }

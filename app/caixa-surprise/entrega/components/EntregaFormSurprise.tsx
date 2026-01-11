@@ -3,17 +3,17 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-import EntregaTypeSection from "./EntregaTypeSection"
-import DeliveryCalendar from "./DeliveryCalendar"
-import DeliveryMethodSection from "./DeliveryMethodSection"
+import EntregaTypeSection from "../../../entrega/components/EntregaTypeSection"
+import DeliveryCalendar from "../../../entrega/components/DeliveryCalendar"
+import DeliveryMethodSection from "../../../entrega/components/DeliveryMethodSection"
 
 type DigitalMethod = "whatsapp" | "email"
 type FisicaMethod = "correios" | "local" | "taxi"
 
-export default function EntregaForm() {
+export default function EntregaFormSurprise() {
   const router = useRouter()
 
-  const [tipoEntrega, setTipoEntrega] = useState<"digital" | "fisica" | "ambos">("digital")
+  const [tipoEntrega, setTipoEntrega] = useState<"digital" | "fisica" | "ambos">("fisica")
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [digitalMethod, setDigitalMethod] = useState<DigitalMethod | null>(null)
   const [fisicaMethod, setFisicaMethod] = useState<FisicaMethod | null>(null)
@@ -30,41 +30,20 @@ export default function EntregaForm() {
   ]
 
   useEffect(() => {
-    const loadData = () => {
-      const mensagemStr = localStorage.getItem("mimo_mensagem")
-      if (!mensagemStr) {
-        router.push("/home")
-        return
-      }
-
-      try {
-        const mensagem = JSON.parse(mensagemStr)
-        const format = mensagem.format
-
-        // 1. Define o tipo de entrega baseado no formato comprado
-        let currentTipo: "digital" | "fisica" | "ambos" = "digital"
-        if (format === "fisico") currentTipo = "fisica"
-        else if (format === "full_premium") currentTipo = "ambos"
-
-        setTipoEntrega(currentTipo)
-
-        // 2. Tenta restaurar seleções anteriores do usuário para facilitar
-        const savedSelection = localStorage.getItem("deliverySelection")
-        if (savedSelection) {
-          const parsed = JSON.parse(savedSelection)
-          // Só restaura se o tipo de entrega salvo for compatível com o plano atual
-          if (parsed.tipoEntrega === currentTipo) {
-            if (parsed.dataEntrega) setSelectedDate(new Date(parsed.dataEntrega))
-            if (parsed.metodoDigital) setDigitalMethod(parsed.metodoDigital)
-            if (parsed.metodoFisico) setFisicaMethod(parsed.metodoFisico)
-          }
-        }
-      } catch (e) {
-        console.error("Erro ao carregar dados:", e)
-      }
+    const surpriseDataStr = localStorage.getItem("surprise_box_data")
+    if (!surpriseDataStr) {
+      router.push("/caixa-surprise")
+      return
     }
 
-    loadData()
+    const savedSelection = localStorage.getItem("surprise_deliverySelection")
+    if (savedSelection) {
+      const parsed = JSON.parse(savedSelection)
+      setTipoEntrega(parsed.tipoEntrega || "fisica")
+      if (parsed.dataEntrega) setSelectedDate(new Date(parsed.dataEntrega))
+      if (parsed.metodoDigital) setDigitalMethod(parsed.metodoDigital)
+      if (parsed.metodoFisico) setFisicaMethod(parsed.metodoFisico)
+    }
   }, [router])
 
   const canContinue = (): boolean => {
@@ -85,22 +64,22 @@ export default function EntregaForm() {
       metodoFisico: fisicaMethod,
     }
 
-    localStorage.setItem("deliverySelection", JSON.stringify(deliverySelection))
-    router.push("/dados-entrega")
+    localStorage.setItem("surprise_deliverySelection", JSON.stringify(deliverySelection))
+    router.push("/caixa-surprise/dados-entrega")
   }
 
   return (
     <div className="bg-white rounded-2xl shadow-md space-y-6 max-w-xl mx-auto p-6 border border-gray-100">
-      {/* 1. Mostra apenas o tipo fixo do plano */}
+      {/* 1. Tipo de Entrega */}
       <EntregaTypeSection tipoEntrega={tipoEntrega} setTipoEntrega={setTipoEntrega} />
 
-      {/* 2. Calendário (Sempre visível) */}
+      {/* 2. Calendário */}
       <div className="border-t pt-4">
         <h3 className="text-sm font-bold text-gray-700 mb-4">Quando devemos entregar?</h3>
         <DeliveryCalendar selectedDate={selectedDate} onDateSelect={setSelectedDate} />
       </div>
 
-      {/* 3. Métodos Dinâmicos */}
+      {/* 3. Métodos de Entrega */}
       <div className="space-y-4">
         {(tipoEntrega === "digital" || tipoEntrega === "ambos") && (
           <DeliveryMethodSection
@@ -113,7 +92,7 @@ export default function EntregaForm() {
 
         {(tipoEntrega === "fisica" || tipoEntrega === "ambos") && (
           <DeliveryMethodSection
-            title="Como entregamos o presente físico?"
+            title="Como entregamos a Caixa Surprise?"
             options={fisicaOptions}
             selected={fisicaMethod}
             onSelect={setFisicaMethod}

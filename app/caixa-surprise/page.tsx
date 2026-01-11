@@ -1,13 +1,11 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Header from "../../components/Header"
 import Footer from "../../components/Footer"
 
 export default function CaixaSurprisePage() {
   const router = useRouter()
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
 
   const categories = [
     {

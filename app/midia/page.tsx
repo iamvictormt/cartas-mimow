@@ -10,6 +10,7 @@ export default async function MidiaPage({
   searchParams: Promise<{ tipo?: string }>
 }) {
   const resolvedParams = await searchParams
+
   return (
     <Suspense
       fallback={

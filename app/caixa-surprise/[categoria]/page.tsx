@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
+import Image from "next/image"
 import Header from "../../../components/Header"
 import Footer from "../../../components/Footer"
 import { VideoCameraIcon, PhotoIcon, ChatBubbleLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline"
@@ -26,7 +27,6 @@ export default function CategoriaPage() {
   const [items, setItems] = useState<Item[]>([])
   const [selectedItems, setSelectedItems] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
-  const [viewingMedia, setViewingMedia] = useState<string | null>(null)
 
   const categoryConfig: Record<string, { title: string; emoji: string }> = {
     produtos: { title: "Produtos", emoji: "🎁" },
@@ -122,7 +122,6 @@ export default function CategoriaPage() {
 
       <main className="flex-grow px-4 sm:px-8 lg:px-16 pt-24 pb-32 sm:pt-28">
         <div className="max-w-7xl mx-auto">
-          {/* Header with back button and category info */}
           <div className="mb-8">
             <button
               onClick={() => router.back()}
@@ -146,7 +145,6 @@ export default function CategoriaPage() {
             )}
           </div>
 
-          {/* Items Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {items.map((item) => {
               const isSelected = selectedItems.includes(item.id)
@@ -159,13 +157,8 @@ export default function CategoriaPage() {
                   }`}
                   onClick={() => toggleItemSelection(item.id)}
                 >
-                  {/* Image */}
                   <div className="relative h-48 bg-gray-100">
-                    <img
-                      src={item.imagens[0] || "/placeholder.svg"}
-                      alt={item.nome}
-                      className="w-full h-full object-cover"
-                    />
+                    <Image src={item.imagens[0] || "/placeholder.svg"} alt={item.nome} fill className="object-cover" />
                     {isSelected && (
                       <div className="absolute top-3 right-3 bg-red-900 text-white rounded-full p-2">
                         <CheckCircleIcon className="h-5 w-5" />
@@ -176,12 +169,10 @@ export default function CategoriaPage() {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-5">
                     <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1">{item.nome}</h3>
                     <p className="text-sm text-gray-600 mb-4 line-clamp-2">{item.descricao}</p>
 
-                    {/* Media Buttons */}
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       {item.videoUrl && (
                         <button
@@ -208,7 +199,6 @@ export default function CategoriaPage() {
                       </button>
                     </div>
 
-                    {/* Price */}
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <span className="text-xl font-black text-red-900">
                         R$ {item.valor.toFixed(2).replace(".", ",")}
@@ -233,7 +223,6 @@ export default function CategoriaPage() {
         </div>
       </main>
 
-      {/* Fixed Bottom Bar */}
       {selectedItems.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
